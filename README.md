@@ -1,17 +1,20 @@
-# Mina::Rollbar [![Build Status](https://travis-ci.org/code-lever/mina-rollbar.png)](https://travis-ci.org/code-lever/mina-rollbar) [![Code Climate](https://codeclimate.com/github/code-lever/mina-rollbar.png)](https://codeclimate.com/github/code-lever/mina-rollbar)
-
+# Mina::Rollbar 
 [Mina](https://github.com/mina-deploy/mina) tasks for interacting with [Rollbar](http://rollbar.com).
+
+This is updated version of [Mina::Rollbar](https://github.com/code-lever/mina-rollbar). 
+Supports separate deployment started/finished notifications in rollbar.
 
 Adds the following tasks:
 
-    rollbar:notify
+    rollbar:notify:starting
+    rollbar:notify:finished
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'mina-rollbar', require: false
+gem 'mina-rollbar-3', require: false
 ```
 
 And then execute:
@@ -27,13 +30,20 @@ And then execute:
     set :rollbar_access_token, 'this-is-not-a-real-token'
 
     task deploy: :environment do
+      run(:local) do
+        invoke :'rollbar:starting'
+      end
+
       deploy do
         ...
 
-        to :launch do
+        on :launch do
           ...
-          invoke :'rollbar:notify'
         end
+      end
+
+      run(:local) do
+        invoke :'rollbar:finished'
       end
     end
 
@@ -49,7 +59,7 @@ And then execute:
 
 ## Contributing
 
-1. Fork it ( https://github.com/code-lever/mina-rollbar/fork )
+1. Fork it ( https://github.com/railsblueprint/mina-rollbar/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
